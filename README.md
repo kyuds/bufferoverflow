@@ -1,17 +1,16 @@
 # bufferoverflow
-Exploiting buffer overflow
+Exploiting buffer overflow (stack-based)
 
 ```
 # build docker image
-docker build -t bfo:poc .
+docker build -t bfo:1 .
 
 # run docker container
-docker run --name bfo -it bfo:poc /bin/sh
+docker run -it bfo:1 /bin/sh
 
 # run the buffer overflow sample
-./exec.sh
+./bfo
 ```
 
-The bufferoverflow problem is a really common and well-known exploit in computer security and more broadly computer science. However, for beginners starting with computer science, it is sort of hard to grasp exactly why the bufferoverflow problem is problematic. The standard explanation of "oh you can overwrite parts of memory that you shouldn't" is insufficient when faced with the question of: "how do you even know whats where? Isn't it impractical in practice?". 
-
-This project attempts to give explanations on how stack-memory bufferoverflow problems maybe exploited in the C programming language (note that this is different from heap-memory bufferoverflow). More specifically, it shows how writing data into memory can be used to reroute the program to run code that is not called. If such operations are successful, then naturally attackers to any given system will have immediate full control over the specific process, and in the advent that the said process has elevated privileges, significant control over the machine. The project is run in a Dockerfile because performing a bufferoverflow exploit requires some security settings on the operating system to be turned off. Since we don't want to turn such settings off on our local machine, we use a container instead. 
+### So how does buffer overflow work?
+The buffer overflow vulnerability in essence is very simple: you overwrite parts of memory in the stack that you should not. The linux call stack is designed such that the stack grows downwards. Our point of concern is the return address when the function exists. Below the return address are our function parameters, and any other variable that we declare on the stack. By overwriting all contents of the stack including the return address, we can effectively change the return address and redirect program execution flow. In our case, we have a 8 byte pointer (parameter) and a one byte long character array on the stack below our return address (that is 8 bytes), so we have to force overwrite a total of 17 bytes when we buffer overflow using `strcpy` on the character array.
